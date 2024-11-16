@@ -38,7 +38,9 @@ app.use("/raw_material", raw_material_routes);
 
 // Product Route
 app.use("/product", product_routes)
-
+app.get('/', (req, res) => {
+  res.send("Hello World!");
+});
 // Server listening
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on ${process.env.PORT}`);
