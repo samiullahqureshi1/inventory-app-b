@@ -37,7 +37,7 @@ const get_product = async (req, resp) => {
       .status(200)
       .json({ message: `Data Fetched successfully`, data: data_get });
   } catch (error) {
-    resp.status(400).json(error.message);
+    resp.status(400).json(error.message)
   }
 };
 
