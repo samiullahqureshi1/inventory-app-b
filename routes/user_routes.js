@@ -2,9 +2,9 @@ import express from "express";
 const user_routes = express.Router();
 
 // Import Functions
-import { Signup, Login } from "../controllers/user_controller.js";
+import { signUp, signIn } from "../controllers/user_controller.js";
 
-user_routes.post("/signup", Signup);
-user_routes.post("/login", Login);
+user_routes.post("/signup", signUp);
+user_routes.post("/login", signIn);
 
 export { user_routes };

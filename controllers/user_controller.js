@@ -1,99 +1,201 @@
-// Import Model
-import { User } from "../models/user_model.js";
+// // Import Model
+// import { User } from "../models/user_model.js";
 
-// Import Packages
-import bcryptjs from "bcryptjs";
+// // Import Packages
+// import bcryptjs from "bcryptjs";
+// import jwt from "jsonwebtoken";
+
+// // Import Validation
+// import {
+//   signup_validation,
+//   login_validation,
+// } from "../utils/validations/user_validation.js";
+
+// // Hashing Password
+// const secure_password = async (password) => {
+//   try {
+//     const hash_password = await bcryptjs.hash(password, 10);
+//     return hash_password;
+//   } catch (error) {
+//     console.log(error.message);
+//   }
+// };
+
+// // SignUp
+
+// const Signup = async (req, resp) => {
+//   try {
+//     const { error } = signup_validation(req.body);
+//     if (error) {
+//       return resp.status(400).send({ message: error.details[0].message });
+//     }
+
+//     const existing_user = await User.findOne({ email: req.body.email });
+//     if (existing_user) {
+//       return resp.status(400).send({ message: `Email already exists` });
+//     }
+
+//     const hashed_password = await secure_password(req.body.password);
+
+//     const user = new User({
+//       ...req.body,
+//       password: hashed_password,
+//     });
+
+//     const save_user = await user.save();
+
+//     const token = jwt.sign(
+//       { id: save_user._id, email: save_user.email },
+//       process.env.JWT_SECRET_KEY,
+//       { expiresIn: "30d" }
+//     );
+
+//     return resp.status(200).send({
+//       message: `Signup successfully`,
+//       user: save_user,
+//       token: token,
+//     });
+//   } catch (error) {
+//     return resp.status(400).send(error.message);
+//   }
+// };
+
+// // LogIn
+// const Login = async (req, resp) => {
+//   try {
+//     const { error } = login_validation(req.body);
+//     if (error) {
+//       return resp.status(400).send({ message: error.details[0].message });
+//     }
+
+//     const { email, password } = req.body;
+
+//     const data = await User.findOne({ email: email });
+//     if (!data) {
+//       return resp.status(400).send({ message: `Email not exists` });
+//     }
+
+//     const check_password = await bcryptjs.compare(password, data.password);
+//     if (!check_password) {
+//       return resp.status(400).send({ message: `Invalid Password` });
+//     }
+
+//     const token = jwt.sign(
+//       { id: data._id, email: data.email },
+//       process.env.JWT_SECRET_KEY,
+//       { expiresIn: "30d" }
+//     );
+
+//     return resp.status(200).send({
+//       message: `Login successfully`,
+//       user: data,
+//       token: token,
+//     });
+//   } catch (error) {
+//     return resp.status(400).send(error.message);
+//   }
+// };
+
+// export { Signup, Login };
+
+import { authModel } from "../models/user_model.js";
 import jwt from "jsonwebtoken";
+import { logInValidationSchema, regiterValidationSchema } from "../utils/validations/user_validation.js";
 
-// Import Validation
-import {
-  signup_validation,
-  login_validation,
-} from "../utils/validations/user_validation.js";
 
-// Hashing Password
-const secure_password = async (password) => {
-  try {
-    const hash_password = await bcryptjs.hash(password, 10);
-    return hash_password;
-  } catch (error) {
-    console.log(error.message);
-  }
+const createToken = (payLoad) => {
+  const token = jwt.sign({ payLoad }, process.env.SECRET_KEY, {
+    expiresIn: "175d",
+  });
+  return token;
 };
 
-// SignUp
-
-const Signup = async (req, resp) => {
+ const signIn = async (req, res) => {
   try {
-    const { error } = signup_validation(req.body);
+    const { error, value } = logInValidationSchema.validate(req.body);
+
     if (error) {
-      return resp.status(400).send({ message: error.details[0].message });
+      throw new Error(error.details[0].message);
     }
-
-    const existing_user = await User.findOne({ email: req.body.email });
-    if (existing_user) {
-      return resp.status(400).send({ message: `Email already exists` });
-    }
-
-    const hashed_password = await secure_password(req.body.password);
-
-    const user = new User({
-      ...req.body,
-      password: hashed_password,
-    });
-
-    const save_user = await user.save();
-
-    const token = jwt.sign(
-      { id: save_user._id, email: save_user.email },
-      process.env.JWT_SECRET_KEY,
-      { expiresIn: "30d" }
-    );
-
-    return resp.status(200).send({
-      message: `Signup successfully`,
-      user: save_user,
-      token: token,
-    });
-  } catch (error) {
-    return resp.status(400).send(error.message);
-  }
-};
-
-// LogIn
-const Login = async (req, resp) => {
-  try {
-    const { error } = login_validation(req.body);
-    if (error) {
-      return resp.status(400).send({ message: error.details[0].message });
-    }
-
     const { email, password } = req.body;
+    // checking email already exist
+    const emailExist = await authModel.findOne({
+      email: email,
+    });
 
-    const data = await User.findOne({ email: email });
-    if (!data) {
-      return resp.status(400).send({ message: `Email not exists` });
+    if (!emailExist) {
+      throw new Error("user does not exist with this email");
     }
-
-    const check_password = await bcryptjs.compare(password, data.password);
-    if (!check_password) {
-      return resp.status(400).send({ message: `Invalid Password` });
+    // Compare passwords
+    const isMatch = await emailExist.comparePassword(password);
+    if (!isMatch) {
+      throw new Error("password does not match");
     }
-
-    const token = jwt.sign(
-      { id: data._id, email: data.email },
-      process.env.JWT_SECRET_KEY,
-      { expiresIn: "30d" }
-    );
-
-    return resp.status(200).send({
-      message: `Login successfully`,
-      user: data,
-      token: token,
+    const token = createToken({ _id: emailExist._id });
+    res.send({
+      message: "successfully logIn",
+      token,
+      data: emailExist,
     });
   } catch (error) {
-    return resp.status(400).send(error.message);
+    return res.status(400).json({ error: error.message });
   }
 };
 
-export { Signup, Login };
+ const signUp = async (req, res) => {
+  try {
+    const { error, value } = regiterValidationSchema.validate(req.body);
+
+    if (error) {
+      throw new Error(error.details[0].message);
+    }
+
+    // checking email already exist
+    const userExist = await authModel.findOne({
+      email: req.body.email,
+    });
+
+    if (userExist) {
+      throw new Error("user already exist with this email");
+    }
+
+    // create new user
+    const newUser = new authModel(req.body);
+    const saveUser = await newUser.save();
+    const token = createToken({ _id: saveUser._id });
+    res.send({
+      message: "successfully register",
+      token,
+      data: saveUser,
+    });
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+};
+
+export const updateUserTags = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const newTag = req.query.query;
+
+    const updatedUser = await authModel.findByIdAndUpdate(
+      userId,
+      { $push: { tags: newTag } },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(200).send({ message: "no logedIn user" });
+    }
+
+    res.status(200).send({
+      message:'added to the tags'
+    });
+  } catch (error) {
+    console.error("Error updating user tags:", error);
+    res.status(400).send({ message: error.message });
+  }
+};
+
+
+export { signUp, signIn };
