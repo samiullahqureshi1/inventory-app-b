@@ -1,5 +1,5 @@
 import { Product } from "../models/product_model.js";
-
+import cloudinary from "../utils/validations/cloudinary.js";
 import fs from "fs";
 import path from "path";
 import mongoose from "mongoose";
@@ -11,26 +11,61 @@ const __dirname = path.dirname(__filename)
 
 // Create
 
-const new_product = async (req, resp) => {
-  try {
-    const baseUrl = `${req.protocol}://${req.get("host")}`;
+// const new_product = async (req, resp) => {
+//   try {
+//     const baseUrl = `${req.protocol}://${req.get("host")}`;
 
-    const images =
-      Array.isArray(req.files) && req.files.length > 0
-        ? req.files.map((file) => `${baseUrl}/products/${file.originalname}`)
-        : [];
-    req.body.images = images;
-    const data = new Product(req.body);
-    const save_data = await data.save();
-    resp
-      .status(200)
-      .send({ message: "Data saved successfully", data: save_data });
+//     const images =
+//       Array.isArray(req.files) && req.files.length > 0
+//         ? req.files.map((file) => `${baseUrl}/products/${file.originalname}`)
+//         : [];
+//     req.body.images = images;
+//     const data = new Product(req.body);
+//     const save_data = await data.save();
+//     resp
+//       .status(200)
+//       .send({ message: "Data saved successfully", data: save_data });
+//   } catch (error) {
+//     console.log(error.message)
+//     resp.status(400).send(error.message);
+//   }
+// };
+
+const new_product = async (req, res) => {
+  try {
+    // Multer stores the file locally, now we upload to Cloudinary
+    const images = [];
+
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        // Upload image to Cloudinary
+        const result = await cloudinary.uploader.upload(file.path, {
+          folder: 'products', // Optional: Organize images in the 'products' folder
+          resource_type: 'auto', // Auto-detect file type (e.g., image, video)
+        });
+
+        // Push the Cloudinary image URL to the images array
+        images.push(result.secure_url);
+      }
+    }
+
+    // Save the product to the database with the Cloudinary image URLs
+    req.body.images = images; // Set the product's image field to the uploaded URLs
+    const product = new Product(req.body);
+    const savedProduct = await product.save();
+
+    res.status(200).send({
+      message: 'Product saved successfully',
+      data: savedProduct,
+    });
   } catch (error) {
-    console.log(error.message)
-    resp.status(400).send(error.message);
+    console.error(error);
+    res.status(400).send({
+      message: 'Error uploading images',
+      error: error.message,
+    });
   }
 };
-
 // Get
 
 const get_product = async (req, resp) => {
