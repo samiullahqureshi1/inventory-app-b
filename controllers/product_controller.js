@@ -13,9 +13,11 @@ const __dirname = path.dirname(__filename)
 
 const new_product = async (req, resp) => {
   try {
+    const baseUrl = `${req.protocol}://${req.get("host")}`;
+
     const images =
       Array.isArray(req.files) && req.files.length > 0
-        ? req.files.map((file) => `products/${file.originalname}`)
+        ? req.files.map((file) => `${baseUrl}/products/${file.originalname}`)
         : [];
     req.body.images = images;
     const data = new Product(req.body);
