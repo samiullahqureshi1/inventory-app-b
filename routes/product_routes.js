@@ -9,7 +9,8 @@ import {
   update_product,
   delete_product,
   image_update,
-  getOutProduct
+  getOutProduct,
+  deleteProduct
 } from "../controllers/product_controller.js";
 const product_routes = express.Router();
 
@@ -19,4 +20,5 @@ product_routes.patch("/update_product/:id", update_product);
 product_routes.patch("/update_image/:id",upload.array("images"), image_update);
 product_routes.delete("/delete_product/:id", delete_product);
 product_routes.get('/outofstock',getOutProduct)
+product_routes.delete('/:id',deleteProduct)
 export { product_routes };
