@@ -4,10 +4,6 @@ const product_schema = new mongoose.Schema({
   title: {
     type: String,
   },
-  category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Category",
-  },
   product_name: {
     type: String,
   },
@@ -20,6 +16,12 @@ const product_schema = new mongoose.Schema({
   images: {
     type: Array,
   },
+  quantity:{
+    type:String,
+  },
+  price:{
+    type:String
+  }
 });
 
 const Product = mongoose.model("Product", product_schema);

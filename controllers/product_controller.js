@@ -24,6 +24,7 @@ const new_product = async (req, resp) => {
       .status(200)
       .send({ message: "Data saved successfully", data: save_data });
   } catch (error) {
+    console.log(error.message)
     resp.status(400).send(error.message);
   }
 };
@@ -113,4 +114,30 @@ const delete_product = async (req, resp) => {
   }
 };
 
-export { new_product, get_product, update_product, delete_product, image_update};
+const getOutProduct = async (req, res) => {
+  try {
+    const data = await Product.aggregate([
+      {
+        $match: {
+          in_stock: false, // Filter for products where in_stock is false
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      success: true,
+      message: "Out-of-stock products fetched successfully",
+      data,
+    });
+  } catch (error) {
+    console.error("Error fetching out-of-stock products:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch out-of-stock products",
+      error: error.message,
+    });
+  }
+};
+
+
+export { new_product, get_product, update_product, delete_product, image_update ,getOutProduct};
