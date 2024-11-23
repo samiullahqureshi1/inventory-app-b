@@ -16,7 +16,7 @@ const product_routes = express.Router();
 
 product_routes.post("/create_product",upload.array('images'), new_product);
 product_routes.get("/get_product", get_product);
-product_routes.patch("/update_product/:id", update_product);
+product_routes.patch("/update_product/:id",upload.array('images'), update_product);
 product_routes.patch("/update_image/:id",upload.array("images"), image_update);
 product_routes.delete("/delete_product/:id", delete_product);
 product_routes.get('/outofstock',getOutProduct)
