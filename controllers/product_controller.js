@@ -82,18 +82,61 @@ const get_product = async (req, resp) => {
 
 // Update
 
-const update_product = async (req, resp) => {
+// const update_product = async (req, resp) => {
+//   try {
+//     const data = await Product.findByIdAndUpdate(
+//       { _id: req.params.id },
+//       req.body,
+//       { new: true }
+//     );
+//     resp.status(200).send({ message: `Data updated successfully`, data: data });
+//   } catch (error) {
+//     resp.status(400).send(error.message);
+//   }
+// };
+
+const update_product = async (req, res) => {
   try {
-    const data = await Product.findByIdAndUpdate(
-      { _id: req.params.id },
-      req.body,
-      { new: true }
-    );
-    resp.status(200).send({ message: `Data updated successfully`, data: data });
+    const { id } = req.params;
+
+    // Handle file uploads and Cloudinary storage
+    const images = [];
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        const result = await cloudinary.uploader.upload(file.path, {
+          folder: 'products',
+          resource_type: 'auto',
+        });
+        images.push(result.secure_url);
+      }
+    }
+
+    // Add images to the update query
+    const query = { $set: { ...req.body } };
+    if (images.length > 0) {
+      query.$set.images = images; // Only add images if new ones are uploaded
+    }
+
+    // Update the product in the database
+    const product = await Product.findByIdAndUpdate(id, query, { new: true }); // `new: true` returns the updated document
+
+    // Response to client
+    res.status(200).send({
+      message: 'Product updated successfully',
+      data: product,
+    });
+
+    // Optionally: Cleanup local files (if needed)
+    // You can use fs.unlinkSync(file.path) or another library for cleanup.
   } catch (error) {
-    resp.status(400).send(error.message);
+    console.error(error);
+    res.status(400).send({
+      message: 'Error updating product',
+      error: error.message,
+    });
   }
 };
+
 
 // Image update
 
