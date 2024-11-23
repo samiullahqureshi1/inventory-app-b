@@ -87,6 +87,23 @@ const get_product = async (req, resp) => {
   }
 };
 
+const get_product_Out = async (req, resp) => {
+  try {
+    const data_get = await Product.aggregate([
+      {
+        $match: { in_stock: false } // Only fetch products where in_stock is true
+      },
+      {
+        $sort:{createdAt:-1}
+      }
+    ])
+    resp
+      .status(200)
+      .json({ message: `Data Fetched successfully`, data: data_get });
+  } catch (error) {
+    resp.status(400).json(error.message)
+  }
+};
 // Update
 
 // const update_product = async (req, resp) => {
@@ -250,4 +267,4 @@ const deleteProduct = async (req, res) => {
 };
 
 
-export { new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
+export { get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
