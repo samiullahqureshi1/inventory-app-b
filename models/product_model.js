@@ -22,5 +22,10 @@ const product_schema = new mongoose.Schema({
   }
 });
 
+product_schema.pre('save', function (next) {
+  this.in_stock = this.quantity > 0;
+  next();
+});
+
 const Product = mongoose.model("Product", product_schema);
 export { Product };

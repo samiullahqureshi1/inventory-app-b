@@ -66,6 +66,7 @@ const new_product = async (req, res) => {
     });
   }
 };
+
 // Get
 
 const get_product = async (req, resp) => {
