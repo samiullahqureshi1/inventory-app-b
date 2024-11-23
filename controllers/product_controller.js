@@ -73,6 +73,9 @@ const get_product = async (req, resp) => {
   try {
     const data_get = await Product.aggregate([
       {
+        $match: { in_stock: true } // Only fetch products where in_stock is true
+      },
+      {
         $sort:{createdAt:-1}
       }
     ])
