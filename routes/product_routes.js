@@ -14,7 +14,8 @@ import {
   get_product_Out,
   new_product_raw,
   get_product_raw,
-  deleteProductRaw
+  deleteProductRaw,
+  update_product_raw
 } from "../controllers/product_controller.js";
 const product_routes = express.Router();
 
