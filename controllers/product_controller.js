@@ -127,9 +127,7 @@ const get_product = async (req, resp) => {
 const get_product_raw = async (req, resp) => {
   try {
     const data_get = await RawMaterial.aggregate([
-      {
-        $match: { in_stock: true } // Only fetch products where in_stock is true
-      },
+      
       {
         $sort:{createdAt:-1}
       }
