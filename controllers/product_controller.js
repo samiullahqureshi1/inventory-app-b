@@ -115,6 +115,11 @@ const update_product = async (req, res) => {
       }
     }
 
+    // Check if quantity is 0, and set in_stock to false
+    if (req.body.quantity === 0) {
+      req.body.in_stock = false;
+    }
+
     // Add images to the update query
     const query = { $set: { ...req.body } };
     if (images.length > 0) {
@@ -140,6 +145,7 @@ const update_product = async (req, res) => {
     });
   }
 };
+
 
 
 // Image update
