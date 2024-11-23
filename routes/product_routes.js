@@ -31,5 +31,5 @@ product_routes.patch("/update_image/:id",upload.array("images"), image_update);
 product_routes.delete("/delete_product/:id", delete_product);
 product_routes.get('/outofstock',getOutProduct)
 product_routes.delete('/:id',deleteProduct)
-product_routes.delete('raw_product/:id',deleteProductRaw)
+product_routes.delete('/raw_product/:id',deleteProductRaw)
 export { product_routes };
