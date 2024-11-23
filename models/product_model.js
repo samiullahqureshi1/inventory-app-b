@@ -20,6 +20,8 @@ const product_schema = new mongoose.Schema({
   price:{
     type:String
   }
+},{
+  timestamps:true
 });
 
 product_schema.pre('save', function (next) {

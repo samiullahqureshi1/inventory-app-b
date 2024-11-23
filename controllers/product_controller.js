@@ -71,7 +71,11 @@ const new_product = async (req, res) => {
 
 const get_product = async (req, resp) => {
   try {
-    const data_get = await Product.find()
+    const data_get = await Product.aggregate([
+      {
+        $sort:{createdAt:-1}
+      }
+    ])
     resp
       .status(200)
       .json({ message: `Data Fetched successfully`, data: data_get });
