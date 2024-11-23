@@ -370,5 +370,19 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+const deleteProductRaw = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await RawMaterial.findByIdAndDelete(id);
+    if (result) {
+      res.status(200).json({ message: 'Product successfully deleted' });
+    } else {
+      res.status(404).json({ message: 'Product not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting product', error });
+  }
+};
 
-export { new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
+
+export { deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};

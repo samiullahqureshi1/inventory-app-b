@@ -13,7 +13,8 @@ import {
   deleteProduct,
   get_product_Out,
   new_product_raw,
-  get_product_raw
+  get_product_raw,
+  deleteProductRaw
 } from "../controllers/product_controller.js";
 const product_routes = express.Router();
 
@@ -29,4 +30,5 @@ product_routes.patch("/update_image/:id",upload.array("images"), image_update);
 product_routes.delete("/delete_product/:id", delete_product);
 product_routes.get('/outofstock',getOutProduct)
 product_routes.delete('/:id',deleteProduct)
+product_routes.delete('raw_product/:id',deleteProductRaw)
 export { product_routes };
