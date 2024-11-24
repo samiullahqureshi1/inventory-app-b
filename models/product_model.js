@@ -19,7 +19,10 @@ const product_schema = new mongoose.Schema({
   },
   price:{
     type:String
-  }
+  },
+  category:{
+    type:String
+  },
 },{
   timestamps:true
 });
