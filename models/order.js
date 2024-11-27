@@ -15,6 +15,6 @@ const orderSchema = new mongoose.Schema({
   timestamps: true, // Automatically add createdAt and updatedAt fields
 });
 
-const Order = mongoose.model("Order", orderSchema);
+const order = mongoose.model("Order", orderSchema);
 
-export { Order };
+export { order };
