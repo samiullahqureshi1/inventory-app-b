@@ -381,17 +381,38 @@ const deleteProductRaw = async (req, res) => {
   }
 };
 
-const createOrder=async(req,res)=>{
+const createOrder = async (req, res) => {
   try {
-    const { product, quantity, price, discount } = req.body;
+    const { product, quantity, price, discount = 0 } = req.body;
 
+    // Validate input
     if (!product || !quantity || !price) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({ error: "Missing required fields: product, quantity, or price" });
     }
 
-    const totalPrice = Math.max(quantity * price - discount, 0); // Ensure total price is non-negative
+    if (quantity <= 0 || price <= 0 || discount < 0) {
+      return res.status(400).json({ error: "Invalid values: quantity, price, and discount must be positive numbers" });
+    }
 
-    const newOrder = new order({
+    // Find the product by its name
+    const existingProduct = await Product.findOne({ product_name: product });
+    if (!existingProduct) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    // Check stock availability
+    if (existingProduct.quantity < quantity) {
+      return res.status(400).json({ error: `Insufficient stock. Only ${existingProduct.quantity} items available.` });
+    }
+
+    // Calculate the total price
+    const totalPrice = Math.max(quantity * price - discount, 0); // Ensure total is non-negative
+
+    // Deduct the ordered quantity from stock
+    existingProduct.quantity -= quantity;
+
+    // Create a new order
+    const newOrder = new Order({
       product,
       quantity,
       price,
@@ -399,12 +420,20 @@ const createOrder=async(req,res)=>{
       totalPrice,
     });
 
-    const savedOrder = await newOrder.save();
-    res.status(201).json({ message: 'Order created successfully', order: savedOrder });
+    // Save the product and order changes atomically
+    await Promise.all([existingProduct.save(), newOrder.save()]);
+
+    res.status(201).json({
+      message: "Order created successfully",
+      order: newOrder,
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Server error', details: error.message });
+    res.status(500).json({
+      error: "Server error",
+      details: error.message,
+    });
   }
-}
+};
 
 
 const getOrder = async (req, resp) => {
