@@ -406,4 +406,20 @@ const createOrder=async(req,res)=>{
   }
 }
 
-export { createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
+
+const getOrder = async (req, resp) => {
+  try {
+    const data_get = await order.aggregate([
+      {
+        $sort:{createdAt:-1}
+      }
+    ])
+    resp
+      .status(200)
+      .json({ message: `Data Fetched successfully`, data: data_get });
+  } catch (error) {
+    resp.status(400).json(error.message)
+  }
+};
+
+export { getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
