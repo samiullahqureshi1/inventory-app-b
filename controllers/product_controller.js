@@ -4,7 +4,7 @@ import { RawMaterial } from "../models/raw.js";
 import fs from "fs";
 import path from "path";
 import mongoose from "mongoose";
-
+import { order } from "../models/order.js";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -381,5 +381,29 @@ const deleteProductRaw = async (req, res) => {
   }
 };
 
+const createOrder=async(req,res)=>{
+  try {
+    const { product, quantity, price, discount } = req.body;
 
-export { deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
+    if (!product || !quantity || !price) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const totalPrice = Math.max(quantity * price - discount, 0); // Ensure total price is non-negative
+
+    const newOrder = new order({
+      product,
+      quantity,
+      price,
+      discount,
+      totalPrice,
+    });
+
+    const savedOrder = await newOrder.save();
+    res.status(201).json({ message: 'Order created successfully', order: savedOrder });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', details: error.message });
+  }
+}
+
+export { createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};

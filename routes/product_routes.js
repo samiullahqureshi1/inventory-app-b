@@ -15,7 +15,8 @@ import {
   new_product_raw,
   get_product_raw,
   deleteProductRaw,
-  update_product_raw
+  update_product_raw,
+  createOrder
 } from "../controllers/product_controller.js";
 const product_routes = express.Router();
 
@@ -32,4 +33,5 @@ product_routes.delete("/delete_product/:id", delete_product);
 product_routes.get('/outofstock',getOutProduct)
 product_routes.delete('/:id',deleteProduct)
 product_routes.delete('/raw_product/:id',deleteProductRaw)
+product_routes.post('/createorder',createOrder)
 export { product_routes };
