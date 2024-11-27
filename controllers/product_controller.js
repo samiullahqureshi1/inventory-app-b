@@ -412,7 +412,7 @@ const createOrder = async (req, res) => {
     existingProduct.quantity -= quantity;
 
     // Create a new order
-    const newOrder = new Order({
+    const newOrder = new order({
       product,
       quantity,
       price,
