@@ -20,6 +20,7 @@ import {
   getOrder,
   getOrderProccessing,
   getPendingOrder,
+  deleteOrder,
 } from "../controllers/product_controller.js";
 const product_routes = express.Router();
 
@@ -39,6 +40,7 @@ product_routes.get('/getorderproccess',getOrderProccessing)
 product_routes.get('/getorderpending',getPendingOrder)
 
 product_routes.delete('/:id',deleteProduct)
+product_routes.delete('order/:id',deleteOrder)
 product_routes.delete('/raw_product/:id',deleteProductRaw)
 product_routes.post('/createorder',createOrder)
 export { product_routes };

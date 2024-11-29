@@ -497,4 +497,18 @@ const getPendingOrder = async (req, resp) => {
   }
 };
 
-export { getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
+const deleteOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await order.findByIdAndDelete(id);
+    if (result) {
+      res.status(200).json({ message: 'Order successfully deleted' });
+    } else {
+      res.status(404).json({ message: 'Order not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting order', error });
+  }
+};
+
+export { deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
