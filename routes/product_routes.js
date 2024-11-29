@@ -17,7 +17,8 @@ import {
   deleteProductRaw,
   update_product_raw,
   createOrder,
-  getOrder
+  getOrder,
+  getOrderProccessing
 } from "../controllers/product_controller.js";
 const product_routes = express.Router();
 
@@ -33,7 +34,7 @@ product_routes.patch("/update_image/:id",upload.array("images"), image_update);
 product_routes.delete("/delete_product/:id", delete_product);
 product_routes.get('/outofstock',getOutProduct)
 product_routes.get('/getorder',getOrder)
-
+product_routes.get('/getorderproccess',getOrderProccessing)
 product_routes.delete('/:id',deleteProduct)
 product_routes.delete('/raw_product/:id',deleteProductRaw)
 product_routes.post('/createorder',createOrder)
