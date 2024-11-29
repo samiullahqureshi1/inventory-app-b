@@ -477,4 +477,24 @@ const getOrderProccessing = async (req, resp) => {
   }
 };
 
-export { getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
+const getPendingOrder = async (req, resp) => {
+  try {
+    const data_get = await order.aggregate([
+      {
+        $match:{
+          status:'Pending'
+        }
+      },
+      {
+        $sort:{createdAt:-1}
+      }
+    ])
+    resp
+      .status(200)
+      .json({ message: `Data Fetched successfully`, data: data_get });
+  } catch (error) {
+    resp.status(400).json(error.message)
+  }
+};
+
+export { getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
