@@ -401,7 +401,7 @@ const createOrder = async (req, res) => {
     }
 
     // Check stock availability (only if status is "complete")
-    if (status === "complete" && existingProduct.quantity < quantity) {
+    if (status === "Completed" && existingProduct.quantity < quantity) {
       return res.status(400).json({ error: `Insufficient stock. Only ${existingProduct.quantity} items available.` });
     }
 
@@ -409,7 +409,7 @@ const createOrder = async (req, res) => {
     const totalPrice = Math.max(quantity * price - discount, 0); // Ensure total is non-negative
 
     // Deduct the ordered quantity from stock if status is "complete"
-    if (status === "complete") {
+    if (status === "Completed") {
       existingProduct.quantity -= quantity;
     }
 
@@ -424,7 +424,7 @@ const createOrder = async (req, res) => {
     });
 
     // Save the product and order changes atomically
-    if (status === "complete") {
+    if (status === "Completed") {
       await Promise.all([existingProduct.save(), newOrder.save()]);
     } else {
       await newOrder.save(); // Save the order without modifying product stock
