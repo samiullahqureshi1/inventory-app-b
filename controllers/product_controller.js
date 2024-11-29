@@ -383,11 +383,11 @@ const deleteProductRaw = async (req, res) => {
 
 const createOrder = async (req, res) => {
   try {
-    const { product, quantity, price, discount=0 ,status } = req.body;
+    const { product, quantity, price, discount = 0, status } = req.body;
 
     // Validate input
-    if (!product || !quantity || !price) {
-      return res.status(400).json({ error: "Missing required fields: product, quantity, or price" });
+    if (!product || !quantity || !price || !status) {
+      return res.status(400).json({ error: "Missing required fields: product, quantity, price, or status" });
     }
 
     if (quantity <= 0 || price <= 0 || discount < 0) {
@@ -400,16 +400,18 @@ const createOrder = async (req, res) => {
       return res.status(404).json({ error: "Product not found" });
     }
 
-    // Check stock availability
-    if (existingProduct.quantity < quantity) {
+    // Check stock availability (only if status is "complete")
+    if (status === "complete" && existingProduct.quantity < quantity) {
       return res.status(400).json({ error: `Insufficient stock. Only ${existingProduct.quantity} items available.` });
     }
 
     // Calculate the total price
     const totalPrice = Math.max(quantity * price - discount, 0); // Ensure total is non-negative
 
-    // Deduct the ordered quantity from stock
-    existingProduct.quantity -= quantity;
+    // Deduct the ordered quantity from stock if status is "complete"
+    if (status === "complete") {
+      existingProduct.quantity -= quantity;
+    }
 
     // Create a new order
     const newOrder = new order({
@@ -418,11 +420,15 @@ const createOrder = async (req, res) => {
       price,
       discount,
       totalPrice,
-      status
+      status,
     });
 
     // Save the product and order changes atomically
-    await Promise.all([existingProduct.save(), newOrder.save()]);
+    if (status === "complete") {
+      await Promise.all([existingProduct.save(), newOrder.save()]);
+    } else {
+      await newOrder.save(); // Save the order without modifying product stock
+    }
 
     res.status(201).json({
       message: "Order created successfully",
@@ -435,6 +441,7 @@ const createOrder = async (req, res) => {
     });
   }
 };
+
 
 
 const getOrder = async (req, resp) => {
