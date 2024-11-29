@@ -40,7 +40,7 @@ product_routes.get('/getorderproccess',getOrderProccessing)
 product_routes.get('/getorderpending',getPendingOrder)
 
 product_routes.delete('/:id',deleteProduct)
-product_routes.delete('order/:id',deleteOrder)
+product_routes.delete('/order/:id',deleteOrder)
 product_routes.delete('/raw_product/:id',deleteProductRaw)
 product_routes.post('/createorder',createOrder)
 export { product_routes };
