@@ -25,6 +25,7 @@ import {
   orderDelivered,
   getWeeklySales,
   getAllOrders,
+  getMonthlySales,
 } from "../controllers/product_controller.js";
 const product_routes = express.Router();
 
@@ -35,6 +36,7 @@ product_routes.get("/get_product", get_product);
 product_routes.get("/out", get_product_Out);
 product_routes.get("/weeklysales", getWeeklySales);
 product_routes.get("/getAllSales", getAllOrders);
+product_routes.get("/getMonthlySales", getMonthlySales);
 product_routes.patch("/update_product/:id",upload.array('images'), update_product);
 product_routes.patch("/update_product_raw/:id",upload.array('images'), update_product_raw);
 product_routes.put('/orderupdate/:id',updateOrder)

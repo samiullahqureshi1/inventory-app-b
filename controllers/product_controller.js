@@ -645,6 +645,50 @@ const getWeeklySales = async (req, resp) => {
   }
 };
 
+const getMonthlySales = async (req, resp) => {
+  try {
+    // Get the start of the current month
+    const currentDate = new Date();
+    const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1); // First day of the month
+    const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0); // Last day of the month
+    endOfMonth.setHours(23, 59, 59, 999); // Set time to the end of the day
+
+    // Fetch monthly delivered orders and calculate the total price
+    const data_get = await order.aggregate([
+      {
+        $match: {
+          status: 'Delivered',
+          createdAt: { $gte: startOfMonth, $lte: endOfMonth }, // Filter orders within the current month
+        },
+      },
+      {
+        $group: {
+          _id: null, // Group all documents into one
+          totalSales: { $sum: "$totalPrice" }, // Sum the totalPrice field
+          orders: { $push: "$$ROOT" }, // Optional: Include detailed orders if needed
+        },
+      },
+    ]);
+
+    if (data_get.length === 0) {
+      return resp.status(200).json({ 
+        message: "No delivered orders found for the current month", 
+        totalSales: 0, 
+        orders: [] 
+      });
+    }
+
+    resp.status(200).json({
+      message: "Monthly delivered orders fetched successfully",
+      totalSales: data_get[0].totalSales,
+      orders: data_get[0].orders, // Optional: Return detailed orders
+    });
+  } catch (error) {
+    console.error('Error fetching monthly delivered orders:', error);
+    resp.status(500).json({ error: error.message });
+  }
+};
+
 
 const getAllOrders = async (req, resp) => {
   try {
@@ -684,4 +728,4 @@ const getAllOrders = async (req, resp) => {
 };
 
 
-export {getAllOrders,getWeeklySales,orderDelivered,updateOrder, deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
+export {getMonthlySales,getAllOrders,getWeeklySales,orderDelivered,updateOrder, deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
