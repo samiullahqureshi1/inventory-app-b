@@ -22,6 +22,7 @@ import {
   getPendingOrder,
   deleteOrder,
   updateOrder,
+  orderDelivered,
 } from "../controllers/product_controller.js";
 const product_routes = express.Router();
 
@@ -33,6 +34,7 @@ product_routes.get("/out", get_product_Out);
 product_routes.patch("/update_product/:id",upload.array('images'), update_product);
 product_routes.patch("/update_product_raw/:id",upload.array('images'), update_product_raw);
 product_routes.put('/orderupdate/:id',updateOrder)
+product_routes.put('/orderdeliver/:id',orderDelivered)
 product_routes.patch("/update_image/:id",upload.array("images"), image_update);
 product_routes.delete("/delete_product/:id", delete_product);
 product_routes.get('/outofstock',getOutProduct)
