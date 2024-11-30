@@ -564,8 +564,6 @@ const updateOrder = async (req, res) => {
         .status(200)
         .send({
           message: 'Order updated to completed and stock updated',
-          order: updatedOrder,
-          product,
         });
     }
 
