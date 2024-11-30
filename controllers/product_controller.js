@@ -539,7 +539,7 @@ const updateOrder = async (req, res) => {
     if (product.quantity < Order.quantity) {
       return res
         .status(400)
-        .send(
+        .json(
           `Insufficient stock. Available quantity: ${product.quantity}`
         );
     }
