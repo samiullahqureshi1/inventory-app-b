@@ -449,7 +449,7 @@ const getOrder = async (req, resp) => {
     const data_get = await order.aggregate([
       {
         $match:{
-          status:'Completed'
+          status:'Delivered'
         }
       },
       {
@@ -552,7 +552,7 @@ const updateOrder = async (req, res) => {
     const query = {
       $set: {
         ...req.body,
-        status: req.body.status || 'Completed', // Default to 'Completed' if not provided
+        status: req.body.status || 'Delivered', // Default to 'Completed' if not provided
       },
     };
     const updatedOrder = await order.findByIdAndUpdate(id, query, {
