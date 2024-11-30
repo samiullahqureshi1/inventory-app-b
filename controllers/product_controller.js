@@ -536,7 +536,7 @@ const updateOrder = async (req, res) => {
     }
 
     // Check if product quantity is sufficient
-    if (product.quantity < Order.quantity) {
+    if (product.quantity <= Order.quantity) {
       return res
         .status(400)
         .send(
