@@ -524,19 +524,19 @@ const updateOrder = async (req, res) => {
     const { id } = req.params;
 
     // Fetch the order by ID
-    const order = await order.findById(id);
+    const Order = await order.findById(id);
     if (!order) {
       return res.status(404).send('Order not found');
     }
 
     // Fetch the product based on product_name in the order
-    const product = await Product.findOne({ name: order.product });
+    const product = await Product.findOne({ product_name: Order.product });
     if (!product) {
       return res.status(404).send('Product not found');
     }
 
     // Check if product quantity is sufficient
-    if (product.quantity < order.quantity) {
+    if (product.quantity < Order.quantity) {
       return res
         .status(400)
         .send(
@@ -545,7 +545,7 @@ const updateOrder = async (req, res) => {
     }
 
     // Update the product quantity
-    product.quantity -= order.quantity;
+    product.quantity -= Order.quantity;
     await product.save();
 
     // Update the order status to completed
