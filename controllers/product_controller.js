@@ -650,6 +650,11 @@ const getAllOrders = async (req, resp) => {
   try {
     const data_get = await order.aggregate([
       {
+        $match: {
+          status: 'Delivered',
+        },
+      },
+      {
         $sort:{createdAt:-1}
       },
       {
