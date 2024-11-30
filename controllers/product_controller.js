@@ -590,7 +590,7 @@ const orderDelivered = async (req, res) => {
     const result = await order.findByIdAndUpdate(id, query, { new: true });
 console.log(result)
     if (result) {
-      return res.status(200).send('Order updated to completed');
+      return res.status(200).send('Order updated to delivered');
     }
 
     res.status(404).send('Order not found');
@@ -600,5 +600,38 @@ console.log(result)
 };
 
 
+const getWeeklySales = async (req, res) => {
+  try {
+    // Calculate the start of the current week (Sunday)
+    const currentDate = new Date();
+    const startOfWeek = new Date(currentDate);
+    startOfWeek.setDate(currentDate.getDate() - currentDate.getDay()); // Move to Sunday
+    startOfWeek.setHours(0, 0, 0, 0); // Reset time to start of the day
 
-export {orderDelivered,updateOrder, deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
+    // Aggregate orders that were delivered this week
+    const weeklyOrders = await order.aggregate([
+      {
+        $match: {
+          status: 'Delivered', // Only include delivered orders
+          createdAt: { $gte: startOfWeek }, // Orders created from the start of the week
+        },
+      },
+      {
+        $sort: { createdAt: -1 }, // Sort by most recent
+      },
+    ]);
+
+    if (weeklyOrders.length > 0) {
+      return res.status(200).json({ orders: weeklyOrders });
+    } else {
+      return res.status(404).send('No delivered orders found for this week');
+    }
+  } catch (error) {
+    console.error('Error fetching weekly sales:', error);
+    res.status(500).send('Something went wrong');
+  }
+};
+
+
+
+export {getWeeklySales,orderDelivered,updateOrder, deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
