@@ -524,7 +524,7 @@ const updateOrder = async (req, res) => {
     const { id } = req.params;
 
     // Fetch the order by ID
-    const order = await Order.findById(id);
+    const order = await order.findById(id);
     if (!order) {
       return res.status(404).send('Order not found');
     }
@@ -555,7 +555,7 @@ const updateOrder = async (req, res) => {
         status: req.body.status || 'Completed', // Default to 'Completed' if not provided
       },
     };
-    const updatedOrder = await Order.findByIdAndUpdate(id, query, {
+    const updatedOrder = await order.findByIdAndUpdate(id, query, {
       new: true,
     });
 
