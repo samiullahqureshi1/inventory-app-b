@@ -600,12 +600,24 @@ console.log(result)
 };
 
 
-const getWeeklySales = async (req, res) => {
- try {
-  await order.find()
- } catch (error) {
-  
- }
+const getWeeklySales = async (req, resp) => {
+  try {
+    const data_get = await order.aggregate([
+      {
+        $match:{
+          status:'Delivered'
+        }
+      },
+      {
+        $sort:{createdAt:-1}
+      }
+    ])
+    resp
+      .status(200)
+      .json({ message: `Data Fetched successfully`, data: data_get });
+  } catch (error) {
+    resp.status(400).json(error.message)
+  }
 };
 
 
