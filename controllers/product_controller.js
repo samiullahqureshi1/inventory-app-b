@@ -651,11 +651,28 @@ const getAllOrders = async (req, resp) => {
     const data_get = await order.aggregate([
       {
         $sort:{createdAt:-1}
-      }
+      },
+      {
+        $group: {
+          _id: null, // Group all documents into one
+          totalSales: { $sum: "$totalPrice" }, // Sum the totalPrice field
+          orders: { $push: "$$ROOT" }, // Optional: Include detailed orders if needed
+        },
+      },
     ])
-    resp
-      .status(200)
-      .json({ message: `Data Fetched successfully`, data: data_get });
+    if (data_get.length === 0) {
+      return resp.status(200).json({ 
+        message: "No orders found", 
+        totalSales: 0, 
+        orders: [] 
+      });
+    }
+
+    resp.status(200).json({
+      message: "All orders fetched successfully",
+      totalSales: data_get[0].totalSales,
+      orders: data_get[0].orders, // Optional: Return detailed orders
+    });
   } catch (error) {
     resp.status(400).json(error.message)
   }
