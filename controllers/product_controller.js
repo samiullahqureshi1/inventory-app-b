@@ -602,23 +602,35 @@ console.log(result)
 
 const getWeeklySales = async (req, resp) => {
   try {
+    // Get the start of the current week (Monday)
+    const currentDate = new Date();
+    const startOfWeek = new Date(
+      currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 1) // Monday
+    );
+    startOfWeek.setHours(0, 0, 0, 0); // Set time to 00:00:00
+
+    // Fetch weekly delivered orders
     const data_get = await order.aggregate([
       {
-        $match:{
-          status:'Delivered'
-        }
+        $match: {
+          status: 'Delivered',
+          createdAt: { $gte: startOfWeek }, // Filter orders from the start of the week
+        },
       },
       {
-        $sort:{createdAt:-1}
-      }
-    ])
+        $sort: { createdAt: -1 }, // Sort by newest first
+      },
+    ]);
+
     resp
       .status(200)
-      .json({ message: `Data Fetched successfully`, data: data_get });
+      .json({ message: `Weekly delivered orders fetched successfully`, data: data_get });
   } catch (error) {
-    resp.status(400).json(error.message)
+    console.error('Error fetching weekly delivered orders:', error);
+    resp.status(500).json({ error: error.message });
   }
 };
+
 
 
 
