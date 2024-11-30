@@ -523,26 +523,59 @@ const updateOrder = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Default query object, status set to 'completed'
+    // Fetch the order by ID
+    const order = await Order.findById(id);
+    if (!order) {
+      return res.status(404).send('Order not found');
+    }
+
+    // Fetch the product based on product_name in the order
+    const product = await Product.findOne({ name: order.product_name });
+    if (!product) {
+      return res.status(404).send('Product not found');
+    }
+
+    // Check if product quantity is sufficient
+    if (product.quantity < order.quantity) {
+      return res
+        .status(400)
+        .send(
+          `Insufficient stock. Available quantity: ${product.quantity}`
+        );
+    }
+
+    // Update the product quantity
+    product.quantity -= order.quantity;
+    await product.save();
+
+    // Update the order status to completed
     const query = {
       $set: {
         ...req.body,
-       status: req.body.status || 'Completed', // If status not provided, default to 'completed'
+        status: req.body.status || 'Completed', // Default to 'Completed' if not provided
       },
     };
+    const updatedOrder = await Order.findByIdAndUpdate(id, query, {
+      new: true,
+    });
 
-    // Find and update the order
-    const result = await order.findByIdAndUpdate(id, query, { new: true });
-console.log(result)
-    if (result) {
-      return res.status(200).send('Order updated to completed');
+    if (updatedOrder) {
+      return res
+        .status(200)
+        .send({
+          message: 'Order updated to completed and stock updated',
+          order: updatedOrder,
+          product,
+        });
     }
 
-    res.status(404).send('Order not found');
+    res.status(404).send('Order not updated');
   } catch (error) {
+    console.error('Error updating order:', error);
     res.status(500).send('Something went wrong');
   }
 };
+
 
 
 export {updateOrder, deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
