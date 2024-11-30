@@ -518,4 +518,31 @@ const deleteOrder = async (req, res) => {
   }
 };
 
-export { deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
+
+const updateOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Default query object, status set to 'completed'
+    const query = {
+      $set: {
+        ...req.body,
+       status: req.body.status || 'Completed', // If status not provided, default to 'completed'
+      },
+    };
+
+    // Find and update the order
+    const result = await order.findByIdAndUpdate(id, query, { new: true });
+console.log(result)
+    if (result) {
+      return res.status(200).send('Order updated to completed');
+    }
+
+    res.status(404).send('Order not found');
+  } catch (error) {
+    res.status(500).send('Something went wrong');
+  }
+};
+
+
+export {updateOrder, deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
