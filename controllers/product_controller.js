@@ -530,7 +530,7 @@ const updateOrder = async (req, res) => {
     }
 
     // Fetch the product based on product_name in the order
-    const product = await Product.findOne({ name: order.product_name });
+    const product = await Product.findOne({ name: order.product });
     if (!product) {
       return res.status(404).send('Product not found');
     }
