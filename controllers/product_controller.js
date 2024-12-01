@@ -552,7 +552,7 @@ const updateOrder = async (req, res) => {
     const query = {
       $set: {
         ...req.body,
-        status: req.body.status || 'Delivered', // Default to 'Completed' if not provided
+        status:'Delivered', // Default to 'Completed' if not provided
       },
     };
     const updatedOrder = await order.findByIdAndUpdate(id, query, {
