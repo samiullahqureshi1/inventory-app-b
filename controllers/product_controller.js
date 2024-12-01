@@ -449,7 +449,7 @@ const getOrder = async (req, resp) => {
     const data_get = await order.aggregate([
       {
         $match:{
-          status:'Completed'
+          status:'Delivered'
         }
       },
       {
