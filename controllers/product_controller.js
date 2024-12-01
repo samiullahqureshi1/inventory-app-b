@@ -600,21 +600,72 @@ console.log(result)
 };
 
 
+// const getWeeklySales = async (req, resp) => {
+//   try {
+//     // Get the start of the current week (Monday)
+//     const currentDate = new Date();
+//     const startOfWeek = new Date(
+//       currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 1) // Monday
+//     );
+//     startOfWeek.setHours(0, 0, 0, 0); // Set time to 00:00:00
+
+//     // Fetch weekly delivered orders and calculate the total price
+//     const data_get = await order.aggregate([
+//       {
+//         $match: {
+//           status: 'Delivered',
+//           createdAt: { $gte: startOfWeek }, // Filter orders from the start of the week
+//         },
+//       },
+//       {
+//         $group: {
+//           _id: null, // Group all documents into one
+//           totalSales: { $sum: "$totalPrice" }, // Sum the totalPrice field
+//           orders: { $push: "$$ROOT" }, // Optional: Include detailed orders if needed
+//         },
+//       },
+//     ]);
+
+//     if (data_get.length === 0) {
+//       return resp.status(200).json({ 
+//         message: "No delivered orders found for the current week", 
+//         totalSales: 0, 
+//         orders: [] 
+//       });
+//     }
+
+//     resp.status(200).json({
+//       message: "Weekly delivered orders fetched successfully",
+//       totalSales: data_get[0].totalSales,
+//       orders: data_get[0].orders, // Optional: Return detailed orders
+//     });
+//   } catch (error) {
+//     console.error('Error fetching weekly delivered orders:', error);
+//     resp.status(500).json({ error: error.message });
+//   }
+// };
+
 const getWeeklySales = async (req, resp) => {
   try {
-    // Get the start of the current week (Monday)
+    // Get the current date
     const currentDate = new Date();
-    const startOfWeek = new Date(
-      currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 1) // Monday
-    );
-    startOfWeek.setHours(0, 0, 0, 0); // Set time to 00:00:00
+    // Adjust to Monday of the current week
+    const dayOfWeek = currentDate.getDay(); // Get the current day (0-6)
+    const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // If Sunday, adjust to Monday of the previous week
+    const startOfWeek = new Date(currentDate.setDate(currentDate.getDate() - diff)); // Set date to Monday
+    startOfWeek.setHours(0, 0, 0, 0); // Set to 00:00:00 (start of the day)
+
+    // Set the end of the week (Sunday 23:59:59)
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6); // Set to Sunday
+    endOfWeek.setHours(23, 59, 59, 999); // Set to last moment of the day
 
     // Fetch weekly delivered orders and calculate the total price
     const data_get = await order.aggregate([
       {
         $match: {
           status: 'Delivered',
-          createdAt: { $gte: startOfWeek }, // Filter orders from the start of the week
+          createdAt: { $gte: startOfWeek, $lte: endOfWeek }, // Filter orders from the start of the week to the end
         },
       },
       {
@@ -626,6 +677,7 @@ const getWeeklySales = async (req, resp) => {
       },
     ]);
 
+    // Handle case where no orders are found
     if (data_get.length === 0) {
       return resp.status(200).json({ 
         message: "No delivered orders found for the current week", 
@@ -634,6 +686,7 @@ const getWeeklySales = async (req, resp) => {
       });
     }
 
+    // Send the response with total sales and order details
     resp.status(200).json({
       message: "Weekly delivered orders fetched successfully",
       totalSales: data_get[0].totalSales,
