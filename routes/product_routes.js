@@ -37,8 +37,8 @@ product_routes.get("/out", get_product_Out);
 product_routes.get("/weeklysales", getWeeklySales);
 product_routes.get("/getAllSales", getAllOrders);
 product_routes.get("/getMonthlySales", getMonthlySales);
-product_routes.patch("/update_product/:id",upload.array('images'), update_product);
-product_routes.patch("/update_product_raw/:id",upload.array('images'), update_product_raw);
+product_routes.patch("/update_product/:id",upload.array('images',10), update_product);
+product_routes.patch("/update_product_raw/:id",upload.array('images',10), update_product_raw);
 product_routes.put('/orderupdate/:id',updateOrder)
 product_routes.put('/orderdeliver/:id',orderDelivered)
 product_routes.patch("/update_image/:id",upload.array("images"), image_update);
