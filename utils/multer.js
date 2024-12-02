@@ -22,11 +22,19 @@
 
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
+
+const uploadDir = path.join(__dirname, 'uploads');
+
+// Ensure the uploads directory exists
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 // Set up multer disk storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, '/uploads'); // Folder where files will be stored temporarily
+    cb(null, uploadDir); // Use a valid relative path
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname)); // Create unique filenames
@@ -35,4 +43,3 @@ const storage = multer.diskStorage({
 
 // Initialize multer with storage configuration
 export const upload = multer({ storage });
-
