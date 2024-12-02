@@ -28,6 +28,7 @@ import {
   getMonthlySales,
   getTotalOrders,
   getAllSales,
+  getTotalRaw,
 } from "../controllers/product_controller.js";
 const product_routes = express.Router();
 
@@ -51,6 +52,7 @@ product_routes.get('/getorderproccess',getOrderProccessing)
 product_routes.get('/getorderpending',getPendingOrder)
 product_routes.get('/getTotalOrders',getTotalOrders)
 product_routes.get('/getAllSlaes',getAllSales)
+product_routes.get('/getAllRawMaterial',getTotalRaw)
 
 product_routes.delete('/:id',deleteProduct)
 product_routes.delete('/order/:id',deleteOrder)
