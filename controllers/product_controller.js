@@ -796,7 +796,7 @@ const getTotalOrders = async (req, resp) => {
   }
 };
 
-const getAllSales=async(res,res)=>{
+const getAllSales=async(req,resp)=>{
   try {
     const data_get = await order.aggregate([
       {
@@ -813,14 +813,14 @@ const getAllSales=async(res,res)=>{
       },
     ])
     if (data_get.length === 0) {
-      return res.status(200).json({ 
+      return resp.status(200).json({ 
         message: "No orders found", 
         totalSales: 0, 
         orders: [] 
       });
     }
 
-    res.status(200).json({
+    resp.status(200).json({
       message: "All orders fetched successfully",
       totalSales: data_get[0].totalSales,
       orders: data_get[0].orders, // Optional: Return detailed orders
