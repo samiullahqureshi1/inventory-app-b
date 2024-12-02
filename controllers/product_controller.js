@@ -42,7 +42,7 @@ console.log(req.files)
       for (const file of req.files) {
         // Upload image to Cloudinary
         const result = await cloudinary.uploader.upload(file.path, {
-          folder: 'products', // Optional: Organize images in the 'products' folder
+          folder: 'uploads', // Optional: Organize images in the 'products' folder
           resource_type: 'auto', // Auto-detect file type (e.g., image, video)
         });
 
