@@ -780,5 +780,20 @@ const getAllOrders = async (req, resp) => {
   }
 };
 
+const getTotalOrders = async (req, resp) => {
+  try {
+    // Count all orders in the collection
+    const totalOrders = await order.countDocuments();
 
-export {getMonthlySales,getAllOrders,getWeeklySales,orderDelivered,updateOrder, deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
+    // Respond with the total order count
+    resp.status(200).json({
+      message: "Total orders fetched successfully",
+      totalOrders,
+    });
+  } catch (error) {
+    // Handle errors
+    resp.status(400).json({ message: error.message });
+  }
+};
+
+export {totalOrders,getMonthlySales,getAllOrders,getWeeklySales,orderDelivered,updateOrder, deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
