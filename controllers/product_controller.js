@@ -820,7 +820,7 @@ const getAllSales=async(res,res)=>{
       });
     }
 
-    resp.status(200).json({
+    res.status(200).json({
       message: "All orders fetched successfully",
       totalSales: data_get[0].totalSales,
       orders: data_get[0].orders, // Optional: Return detailed orders
