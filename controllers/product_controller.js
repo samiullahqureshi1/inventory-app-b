@@ -811,6 +811,21 @@ const getTotalRaw = async (req, resp) => {
     resp.status(400).json({ message: error.message });
   }
 };
+const getTotalInventory = async (req, resp) => {
+  try {
+    // Count all orders in the collection
+    const totalOrders = await Product.countDocuments();
+
+    // Respond with the total order count
+    resp.status(200).json({
+      message: "Total product in inventory fetched successfully",
+      totalOrders,
+    });
+  } catch (error) {
+    // Handle errors
+    resp.status(400).json({ message: error.message });
+  }
+};
 
 const getAllSales=async(req,resp)=>{
   try {
@@ -846,4 +861,6 @@ const getAllSales=async(req,resp)=>{
   }
 }
 
-export {getTotalRaw,getAllSales,getTotalOrders,getMonthlySales,getAllOrders,getWeeklySales,orderDelivered,updateOrder, deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
+
+
+export {getTotalInventory,getTotalRaw,getAllSales,getTotalOrders,getMonthlySales,getAllOrders,getWeeklySales,orderDelivered,updateOrder, deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
