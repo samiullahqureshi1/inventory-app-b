@@ -796,4 +796,38 @@ const getTotalOrders = async (req, resp) => {
   }
 };
 
-export {getTotalOrders,getMonthlySales,getAllOrders,getWeeklySales,orderDelivered,updateOrder, deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
+const getAllSales=async(res,res)=>{
+  try {
+    const data_get = await order.aggregate([
+      {
+        $match: {
+          status: 'Delivered',
+        },
+      },
+      {
+        $group: {
+          _id: null, // Group all documents into one
+          totalSales: { $sum: "$totalPrice" }, // Sum the totalPrice field
+          orders: { $push: "$$ROOT" }, // Optional: Include detailed orders if needed
+        },
+      },
+    ])
+    if (data_get.length === 0) {
+      return resp.status(200).json({ 
+        message: "No orders found", 
+        totalSales: 0, 
+        orders: [] 
+      });
+    }
+
+    resp.status(200).json({
+      message: "All orders fetched successfully",
+      totalSales: data_get[0].totalSales,
+      orders: data_get[0].orders, // Optional: Return detailed orders
+    });
+  } catch (error) {
+    
+  }
+}
+
+export {getAllSales,getTotalOrders,getMonthlySales,getAllOrders,getWeeklySales,orderDelivered,updateOrder, deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
