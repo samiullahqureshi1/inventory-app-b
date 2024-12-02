@@ -36,7 +36,8 @@ const new_product = async (req, res) => {
   try {
     // Multer stores the file locally, now we upload to Cloudinary
     const images = [];
-
+console.log(images)
+console.log(req.files)
     if (req.files && req.files.length > 0) {
       for (const file of req.files) {
         // Upload image to Cloudinary

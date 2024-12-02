@@ -26,7 +26,7 @@ import path from 'path';
 // Set up multer disk storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // Folder where files will be stored temporarily
+    cb(null, '/uploads'); // Folder where files will be stored temporarily
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname)); // Create unique filenames
