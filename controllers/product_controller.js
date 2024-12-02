@@ -813,7 +813,7 @@ const getAllSales=async(res,res)=>{
       },
     ])
     if (data_get.length === 0) {
-      return resp.status(200).json({ 
+      return res.status(200).json({ 
         message: "No orders found", 
         totalSales: 0, 
         orders: [] 
