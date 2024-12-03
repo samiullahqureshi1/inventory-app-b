@@ -63,6 +63,6 @@ product_routes.get('/getTotalInventory',getTotalInventory)
 product_routes.delete('/:id',deleteProduct)
 product_routes.delete('/order/:id',deleteOrder)
 product_routes.delete('/raw_product/:id',deleteProductRaw)
-product_routes.delete('/deleteEmployee',deleteEmployee)
+product_routes.delete('/deleteEmployee:/id',deleteEmployee)
 product_routes.post('/createorder',createOrder)
 export { product_routes };
