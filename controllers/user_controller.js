@@ -183,7 +183,7 @@ const signUp = async (req, res) => {
     }
 
     // Validate the role
-    const validRoles = ["sales", "production"];
+    const validRoles = ["sales", "production", "admin"];  // Added 'admin' to valid roles
     if (!validRoles.includes(req.body.role)) {
       throw new Error(`Invalid role. Allowed roles are: ${validRoles.join(", ")}`);
     }
@@ -210,6 +210,7 @@ const signUp = async (req, res) => {
     return res.status(400).json({ error: error.message });
   }
 };
+
 
 
 
