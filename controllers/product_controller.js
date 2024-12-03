@@ -6,7 +6,7 @@ import path from "path";
 import mongoose from "mongoose";
 import { order } from "../models/order.js";
 import { fileURLToPath } from "url";
-
+import { Employee } from "../models/employee.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename)
 
@@ -862,6 +862,44 @@ const getAllSales=async(req,resp)=>{
   }
 }
 
+const addEmployee = async (req, res) => {
+  try {
+    const { name, email, phone, designation, department, joiningDate, salary, address } = req.body;
 
+    // Validate required fields
+    if (!name || !email || !phone || !designation || !department || !salary || !address) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
-export {getTotalInventory,getTotalRaw,getAllSales,getTotalOrders,getMonthlySales,getAllOrders,getWeeklySales,orderDelivered,updateOrder, deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
+    // Check if employee with the same email already exists
+    const existingEmployee = await Employee.findOne({ email });
+    if (existingEmployee) {
+      return res.status(400).json({ message: "Employee with this email already exists" });
+    }
+
+    // Create a new employee
+    const employee = new Employee({
+      name,
+      email,
+      phone,
+      designation,
+      department,
+      joiningDate,
+      salary,
+      address,
+    });
+
+    // Save the employee to the database
+    const savedEmployee = await employee.save();
+
+    res.status(201).json({
+      message: "Employee added successfully",
+      data: savedEmployee,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error adding employee", error: error.message });
+  }
+};
+
+export {addEmployee,getTotalInventory,getTotalRaw,getAllSales,getTotalOrders,getMonthlySales,getAllOrders,getWeeklySales,orderDelivered,updateOrder, deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
