@@ -922,5 +922,16 @@ const getAllEmployee = async (req, resp) => {
   }
 };
 
+const deleteEmployee=async(req,resp)=>{
+  try {
+    const {id}=req.params
+    const result =await Employee.findByIdAndDelete(id)
+    if(result){
+      resp.status(200).send('data deleted successfully')
+    }
+  } catch (error) {
+    
+  }
+}
 
-export {getAllEmployee,addEmployee,getTotalInventory,getTotalRaw,getAllSales,getTotalOrders,getMonthlySales,getAllOrders,getWeeklySales,orderDelivered,updateOrder, deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
+export {deleteEmployee,getAllEmployee,addEmployee,getTotalInventory,getTotalRaw,getAllSales,getTotalOrders,getMonthlySales,getAllOrders,getWeeklySales,orderDelivered,updateOrder, deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
