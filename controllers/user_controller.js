@@ -110,37 +110,42 @@ const createToken = (payLoad) => {
   return token;
 };
 
- const signIn = async (req, res) => {
-  try {
-    const { error, value } = logInValidationSchema.validate(req.body);
+//  const signIn = async (req, res) => {
+//   try {
+//     const { error, value } = logInValidationSchema.validate(req.body);
 
-    if (error) {
-      throw new Error(error.details[0].message);
-    }
-    const { email, password } = req.body;
-    // checking email already exist
-    const emailExist = await authModel.findOne({
-      email: email,
-    });
+//     if (error) {
+//       throw new Error(error.details[0].message);
+//     }
+//     const { email, password } = req.body;
+//     // checking email already exist
+//     const emailExist = await authModel.findOne({
+//       email: email,
+//     });
 
-    if (!emailExist) {
-      throw new Error("user does not exist with this email");
-    }
-    // Compare passwords
-    const isMatch = await emailExist.comparePassword(password);
-    if (!isMatch) {
-      throw new Error("password does not match");
-    }
-    const token = createToken({ _id: emailExist._id });
-    res.send({
-      message: "successfully logIn",
-      token,
-      data: emailExist,
-    });
-  } catch (error) {
-    return res.status(400).json({ error: error.message });
-  }
-};
+//     if (!emailExist) {
+//       throw new Error("user does not exist with this email");
+//     }
+//     // Compare passwords
+//     const isMatch = await emailExist.comparePassword(password);
+//     if (!isMatch) {
+//       throw new Error("password does not match");
+//     }
+//     const token = createToken({ _id: emailExist._id });
+//     res.send({
+//       message: "successfully logIn",
+//       token,
+//       data: emailExist,
+//     });
+//   } catch (error) {
+//     return res.status(400).json({ error: error.message });
+//   }
+// };
+
+
+
+
+
 
 //  const signUp = async (req, res) => {
 //   try {
@@ -172,6 +177,45 @@ const createToken = (payLoad) => {
 //     return res.status(400).json({ error: error.message });
 //   }
 // };
+
+
+const signIn = async (req, res) => {
+  try {
+    const { error, value } = logInValidationSchema.validate(req.body);
+
+    if (error) {
+      throw new Error(error.details[0].message);
+    }
+
+    const { email, password } = req.body;
+    
+    // Check if email exists in the database
+    const emailExist = await authModel.findOne({
+      email: email,
+    });
+
+    if (!emailExist) {
+      throw new Error("User does not exist with this email");
+    }
+
+    // Compare the password
+    const isMatch = await emailExist.comparePassword(password);
+    if (!isMatch) {
+      throw new Error("Password does not match");
+    }
+
+    // Include the role in the token
+    const token = createToken({ _id: emailExist._id, role: emailExist.role });
+
+    res.send({
+      message: "Successfully logged in",
+      token,
+      data: emailExist,
+    });
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+};
 
 
 const signUp = async (req, res) => {
