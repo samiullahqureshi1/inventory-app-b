@@ -31,6 +31,7 @@ import {
   getTotalRaw,
   getTotalInventory,
   addEmployee,
+  getAllEmployee,
 } from "../controllers/product_controller.js";
 const product_routes = express.Router();
 
@@ -41,6 +42,7 @@ product_routes.post('/postemployee',addEmployee)
 product_routes.get("/get_product", get_product);
 product_routes.get("/out", get_product_Out);
 product_routes.get("/weeklysales", getWeeklySales);
+product_routes.get("/getEmployee", getAllEmployee);
 product_routes.get("/getAllSales", getAllOrders);
 product_routes.get("/getMonthlySales", getMonthlySales);
 product_routes.patch("/update_product/:id",upload.array('images',10), update_product);
