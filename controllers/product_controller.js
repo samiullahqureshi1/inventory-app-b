@@ -904,7 +904,7 @@ const addEmployee = async (req, res) => {
 
 const getAllEmployee = async (req, resp) => {
   try {
-    const data_get = await order.aggregate([
+    const data_get = await Employee.aggregate([
       {
         $match: {
           status: 'Active',
