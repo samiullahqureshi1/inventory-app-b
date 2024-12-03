@@ -13,5 +13,5 @@ export const regiterValidationSchema = Joi.object({
 export const logInValidationSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(6).max(100).required(),
-  role:joi.string()
+  role:Joi.string()
 });
