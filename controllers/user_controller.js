@@ -142,7 +142,39 @@ const createToken = (payLoad) => {
   }
 };
 
- const signUp = async (req, res) => {
+//  const signUp = async (req, res) => {
+//   try {
+//     const { error, value } = regiterValidationSchema.validate(req.body);
+
+//     if (error) {
+//       throw new Error(error.details[0].message);
+//     }
+
+//     // checking email already exist
+//     const userExist = await authModel.findOne({
+//       email: req.body.email,
+//     });
+
+//     if (userExist) {
+//       throw new Error("user already exist with this email");
+//     }
+
+//     // create new user
+//     const newUser = new authModel(req.body);
+//     const saveUser = await newUser.save();
+//     const token = createToken({ _id: saveUser._id });
+//     res.send({
+//       message: "successfully register",
+//       token,
+//       data: saveUser,
+//     });
+//   } catch (error) {
+//     return res.status(400).json({ error: error.message });
+//   }
+// };
+
+
+const signUp = async (req, res) => {
   try {
     const { error, value } = regiterValidationSchema.validate(req.body);
 
@@ -150,21 +182,27 @@ const createToken = (payLoad) => {
       throw new Error(error.details[0].message);
     }
 
-    // checking email already exist
-    const userExist = await authModel.findOne({
-      email: req.body.email,
-    });
-
-    if (userExist) {
-      throw new Error("user already exist with this email");
+    // Validate the role
+    const validRoles = ["sales", "production"];
+    if (!validRoles.includes(req.body.role)) {
+      throw new Error(`Invalid role. Allowed roles are: ${validRoles.join(", ")}`);
     }
 
-    // create new user
+    // Check if email already exists
+    const userExist = await authModel.findOne({ email: req.body.email });
+    if (userExist) {
+      throw new Error("User already exists with this email");
+    }
+
+    // Create new user
     const newUser = new authModel(req.body);
     const saveUser = await newUser.save();
-    const token = createToken({ _id: saveUser._id });
+
+    // Include role in the token
+    const token = createToken({ _id: saveUser._id, role: saveUser.role });
+
     res.send({
-      message: "successfully register",
+      message: "Successfully registered",
       token,
       data: saveUser,
     });
@@ -172,6 +210,8 @@ const createToken = (payLoad) => {
     return res.status(400).json({ error: error.message });
   }
 };
+
+
 
 export const updateUserTags = async (req, res) => {
   try {

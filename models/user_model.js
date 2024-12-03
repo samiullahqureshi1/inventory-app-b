@@ -23,6 +23,9 @@ const authSchema = new mongoose.Schema({
   tags: {
     type: Array,
   },
+  role:{
+    type:String
+  }
 });
 
 // Hash password before saving to database
