@@ -33,7 +33,7 @@ import {
   addEmployee,
   getAllEmployee,
   deleteEmployee,
-  deleteAllProducts,
+  dele,
 } from "../controllers/product_controller.js";
 const product_routes = express.Router();
 
@@ -66,5 +66,4 @@ product_routes.delete('/order/:id',deleteOrder)
 product_routes.delete('/raw_product/:id',deleteProductRaw)
 product_routes.delete('/deleteEmployee/:id',deleteEmployee)
 product_routes.post('/createorder',createOrder)
-product_routes.delete('/s',deleteAllProducts)
 export { product_routes };

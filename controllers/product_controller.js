@@ -934,16 +934,6 @@ const deleteEmployee=async(req,resp)=>{
   }
 }
 
-const deleteAllProducts=async(req,res)=>{
-  try {
-    await Product.deleteMany().then(result=>{
-      if(result){
-        res.status(200).send('success')
-      }
-    })
-  } catch (error) {
-    
-  }
-}
 
-export {deleteAllProducts,deleteEmployee,getAllEmployee,addEmployee,getTotalInventory,getTotalRaw,getAllSales,getTotalOrders,getMonthlySales,getAllOrders,getWeeklySales,orderDelivered,updateOrder, deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
+
+export {deleteEmployee,getAllEmployee,addEmployee,getTotalInventory,getTotalRaw,getAllSales,getTotalOrders,getMonthlySales,getAllOrders,getWeeklySales,orderDelivered,updateOrder, deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
