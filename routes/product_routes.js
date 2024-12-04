@@ -33,7 +33,6 @@ import {
   addEmployee,
   getAllEmployee,
   deleteEmployee,
-  
 } from "../controllers/product_controller.js";
 const product_routes = express.Router();
 
