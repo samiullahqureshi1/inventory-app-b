@@ -110,105 +110,30 @@ const createToken = (payLoad) => {
   return token;
 };
 
-//  const signIn = async (req, res) => {
-//   try {
-//     const { error, value } = logInValidationSchema.validate(req.body);
-
-//     if (error) {
-//       throw new Error(error.details[0].message);
-//     }
-//     const { email, password } = req.body;
-//     // checking email already exist
-//     const emailExist = await authModel.findOne({
-//       email: email,
-//     });
-
-//     if (!emailExist) {
-//       throw new Error("user does not exist with this email");
-//     }
-//     // Compare passwords
-//     const isMatch = await emailExist.comparePassword(password);
-//     if (!isMatch) {
-//       throw new Error("password does not match");
-//     }
-//     const token = createToken({ _id: emailExist._id });
-//     res.send({
-//       message: "successfully logIn",
-//       token,
-//       data: emailExist,
-//     });
-//   } catch (error) {
-//     return res.status(400).json({ error: error.message });
-//   }
-// };
-
-
-
-
-
-
-//  const signUp = async (req, res) => {
-//   try {
-//     const { error, value } = regiterValidationSchema.validate(req.body);
-
-//     if (error) {
-//       throw new Error(error.details[0].message);
-//     }
-
-//     // checking email already exist
-//     const userExist = await authModel.findOne({
-//       email: req.body.email,
-//     });
-
-//     if (userExist) {
-//       throw new Error("user already exist with this email");
-//     }
-
-//     // create new user
-//     const newUser = new authModel(req.body);
-//     const saveUser = await newUser.save();
-//     const token = createToken({ _id: saveUser._id });
-//     res.send({
-//       message: "successfully register",
-//       token,
-//       data: saveUser,
-//     });
-//   } catch (error) {
-//     return res.status(400).json({ error: error.message });
-//   }
-// };
-
-
-const signIn = async (req, res) => {
+ const signIn = async (req, res) => {
   try {
     const { error, value } = logInValidationSchema.validate(req.body);
 
     if (error) {
       throw new Error(error.details[0].message);
     }
-
     const { email, password } = req.body;
-    
-    // Check if email exists in the database
+    // checking email already exist
     const emailExist = await authModel.findOne({
       email: email,
     });
 
     if (!emailExist) {
-      throw new Error("User does not exist with this email");
+      throw new Error("user does not exist with this email");
     }
-
-    // Compare the password
+    // Compare passwords
     const isMatch = await emailExist.comparePassword(password);
     if (!isMatch) {
-      throw new Error("Password does not match");
+      throw new Error("password does not match");
     }
-
-    // Include the role in the token
-    const token = createToken({ _id: emailExist._id, role: emailExist.role });
-
+    const token = createToken({ _id: emailExist._id });
     res.send({
-      message: "Successfully logged in",
+      message: "successfully logIn",
       token,
       data: emailExist,
     });
@@ -218,7 +143,11 @@ const signIn = async (req, res) => {
 };
 
 
-const signUp = async (req, res) => {
+
+
+
+
+ const signUp = async (req, res) => {
   try {
     const { error, value } = regiterValidationSchema.validate(req.body);
 
@@ -226,27 +155,21 @@ const signUp = async (req, res) => {
       throw new Error(error.details[0].message);
     }
 
-    // Validate the role
-    const validRoles = ["sales", "production", "admin"];  // Added 'admin' to valid roles
-    if (!validRoles.includes(req.body.role)) {
-      throw new Error(`Invalid role. Allowed roles are: ${validRoles.join(", ")}`);
-    }
+    // checking email already exist
+    const userExist = await authModel.findOne({
+      email: req.body.email,
+    });
 
-    // Check if email already exists
-    const userExist = await authModel.findOne({ email: req.body.email });
     if (userExist) {
-      throw new Error("User already exists with this email");
+      throw new Error("user already exist with this email");
     }
 
-    // Create new user
+    // create new user
     const newUser = new authModel(req.body);
     const saveUser = await newUser.save();
-
-    // Include role in the token
-    const token = createToken({ _id: saveUser._id, role: saveUser.role });
-
+    const token = createToken({ _id: saveUser._id });
     res.send({
-      message: "Successfully registered",
+      message: "successfully register",
       token,
       data: saveUser,
     });
@@ -254,6 +177,83 @@ const signUp = async (req, res) => {
     return res.status(400).json({ error: error.message });
   }
 };
+
+
+// const signIn = async (req, res) => {
+//   try {
+//     const { error, value } = logInValidationSchema.validate(req.body);
+
+//     if (error) {
+//       throw new Error(error.details[0].message);
+//     }
+
+//     const { email, password } = req.body;
+    
+//     // Check if email exists in the database
+//     const emailExist = await authModel.findOne({
+//       email: email,
+//     });
+
+//     if (!emailExist) {
+//       throw new Error("User does not exist with this email");
+//     }
+
+//     // Compare the password
+//     const isMatch = await emailExist.comparePassword(password);
+//     if (!isMatch) {
+//       throw new Error("Password does not match");
+//     }
+
+//     // Include the role in the token
+//     const token = createToken({ _id: emailExist._id, role: emailExist.role });
+
+//     res.send({
+//       message: "Successfully logged in",
+//       token,
+//       data: emailExist,
+//     });
+//   } catch (error) {
+//     return res.status(400).json({ error: error.message });
+//   }
+// };
+
+
+// const signUp = async (req, res) => {
+//   try {
+//     const { error, value } = regiterValidationSchema.validate(req.body);
+
+//     if (error) {
+//       throw new Error(error.details[0].message);
+//     }
+
+//     // Validate the role
+//     const validRoles = ["sales", "production", "admin"];  // Added 'admin' to valid roles
+//     if (!validRoles.includes(req.body.role)) {
+//       throw new Error(`Invalid role. Allowed roles are: ${validRoles.join(", ")}`);
+//     }
+
+//     // Check if email already exists
+//     const userExist = await authModel.findOne({ email: req.body.email });
+//     if (userExist) {
+//       throw new Error("User already exists with this email");
+//     }
+
+//     // Create new user
+//     const newUser = new authModel(req.body);
+//     const saveUser = await newUser.save();
+
+//     // Include role in the token
+//     const token = createToken({ _id: saveUser._id, role: saveUser.role });
+
+//     res.send({
+//       message: "Successfully registered",
+//       token,
+//       data: saveUser,
+//     });
+//   } catch (error) {
+//     return res.status(400).json({ error: error.message });
+//   }
+// };
 
 
 
