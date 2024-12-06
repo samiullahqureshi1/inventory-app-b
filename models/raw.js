@@ -22,7 +22,10 @@ type:String
   },
   price:{
     type:String
-  }
+  },
+  expiry_date: {
+    type: Date, // New field for expiry date
+  },
 },{
   timestamps:true
 });
