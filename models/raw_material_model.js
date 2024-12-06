@@ -15,6 +15,9 @@ const raw_material_schema = new mongoose.Schema({
     type: String,
     enum: ["kg", "g", "liters", "ml", "pieces", "meters", "units"],
   },
+  expiry_date: {
+    type: Date, // New field for expiry date
+  },
 });
 
 const Raw_Material = mongoose.model("Raw_Material", raw_material_schema);
