@@ -554,6 +554,7 @@ const updateOrder = async (req, res) => {
       $set: {
         ...req.body,
         status:'Delivered', // Default to 'Completed' if not provided
+        deliveredAt: new Date(), // Add current date
       },
     };
     const updatedOrder = await order.findByIdAndUpdate(id, query, {
