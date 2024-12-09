@@ -816,7 +816,7 @@ const getTotalRaw = async (req, resp) => {
 const getTotalInventory = async (req, resp) => {
   try {
     // Count all orders in the collection
-    const totalOrders = await Product.countDocuments();
+    const totalOrders = await Product.countDocuments({ quantity: { $gt: 0 } });
 
     // Respond with the total order count
     resp.status(200).json({
