@@ -11,6 +11,10 @@ const orderSchema = new mongoose.Schema({
     enum: ["Pending", "Processing", "Completed", "Cancelled",'Delivered'],
     default: "Pending",
   },
+  deliveredAt: {
+    type: Date,
+    default: null,
+  },
 }, {
   timestamps: true, // Automatically add createdAt and updatedAt fields
 });
