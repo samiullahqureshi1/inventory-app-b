@@ -935,7 +935,7 @@ const deleteEmployee=async(req,resp)=>{
   }
 }
 
-const getExpiredProducts = async (req, res) => {
+const getProductsCron = async (req, res) => {
   try {
     // Find products where expiry_date is less than the current date
     const products = await Product.find({ expiry_date: { $lt: new Date() } });
