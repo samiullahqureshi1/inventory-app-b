@@ -16,7 +16,7 @@ dotenv.config();
 import { user_routes } from "./routes/user_routes.js";
 import { raw_material_routes } from "./routes/raw_material_routes.js";
 import { product_routes } from "./routes/product_routes.js";
-
+import { startProductExpiryCron } from "./middlewares/expired.js";
 // Data Base Connection
 db_connection()
   .then(() => {
@@ -41,6 +41,9 @@ app.use("/product", product_routes)
 app.get('/', (req, res) => {
   res.send("Hello World!");
 });
+
+
+startProductExpiryCron();
 // Server listening
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on ${process.env.PORT}`);

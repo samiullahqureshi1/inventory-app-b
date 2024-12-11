@@ -1,37 +1,68 @@
+// import mongoose from "mongoose";
+
+// const product_schema = new mongoose.Schema({
+//   title: {
+//     type: String,
+//   },
+//   product_name: {
+//     type: String,
+//   },
+//   discription: {
+//     type: String,
+//   },
+//   in_stock: {
+//     type: Boolean,
+//   },
+//   images: [String],
+//   quantity:{
+//     type:String,
+//   },
+//   price:{
+//     type:String
+//   },
+//   category:{
+//     type:String
+//   },
+//   expiry_date: {
+//     type: Date, // New field for expiry date
+//   },
+// },{
+//   timestamps:true
+// });
+
+// product_schema.pre('save', function (next) {
+//   this.in_stock = this.quantity > 0;
+//   next();
+// });
+
+// const Product = mongoose.model("Product", product_schema);
+// export { Product };
 import mongoose from "mongoose";
 
-const product_schema = new mongoose.Schema({
-  title: {
-    type: String,
+const product_schema = new mongoose.Schema(
+  {
+    title: { type: String },
+    product_name: { type: String },
+    description: { type: String },
+    in_stock: { type: Boolean,default:'true' },
+    images: [String],
+    quantity: { type: String },
+    price: { type: String },
+    category: { type: String },
+    expiry_date: { type: Date },
   },
-  product_name: {
-    type: String,
-  },
-  discription: {
-    type: String,
-  },
-  in_stock: {
-    type: Boolean,
-  },
-  images: [String],
-  quantity:{
-    type:String,
-  },
-  price:{
-    type:String
-  },
-  category:{
-    type:String
-  },
-  expiry_date: {
-    type: Date, // New field for expiry date
-  },
-},{
-  timestamps:true
-});
+  {
+    timestamps: true,
+  }
+);
 
-product_schema.pre('save', function (next) {
-  this.in_stock = this.quantity > 0;
+// Middleware to auto-update in_stock based on quantity
+product_schema.pre("save", function (next) {
+  this.in_stock = parseInt(this.quantity, 10) > 0;
+  const today = new Date();
+  if (this.expiry_date && this.expiry_date < today) {
+    this.in_stock = false;
+  }
   next();
 });
 
