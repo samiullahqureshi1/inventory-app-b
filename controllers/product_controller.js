@@ -870,7 +870,7 @@ const getAllSales=async(req,resp)=>{
 
 const addEmployee = async (req, res) => {
   try {
-    const { name, email, phone, designation, department, joiningDate, salary, address } = req.body;
+    const { name, email, phone, designation, department, joiningDate, salary, address,age,birthDate } = req.body;
 
     // Validate required fields
     if (!name || !email || !phone || !designation || !department || !salary || !address) {
@@ -893,6 +893,8 @@ const addEmployee = async (req, res) => {
       joiningDate,
       salary,
       address,
+      age,
+      birthDate
     });
 
     // Save the employee to the database

@@ -29,6 +29,14 @@ const employeeSchema = new mongoose.Schema({
     required: true,
     default: Date.now,
   },
+  birthDate: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
+  age:{
+type:Number
+  },
   salary: {
     type: Number,
     required: true,
