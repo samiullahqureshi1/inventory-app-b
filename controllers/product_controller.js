@@ -389,7 +389,7 @@ const deleteProductRaw = async (req, res) => {
 
 const createOrder = async (req, res) => {
   try {
-    const { product, quantity, price, discount = 0, status } = req.body;
+    const { product, quantity, price, discount = 0, status ,customerName,customerPhone,customerEmail} = req.body;
 
     // Validate input
     if (!product || !quantity || !price || !status) {
@@ -427,6 +427,9 @@ const createOrder = async (req, res) => {
       discount,
       totalPrice,
       status,
+      customerName,
+      customerPhone,
+      customerEmail
     });
 
     // Save the product and order changes atomically
