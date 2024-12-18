@@ -584,6 +584,62 @@ const updateOrder = async (req, res) => {
   }
 };
 
+const updateOrderCancel = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Fetch the order by ID
+    const Order = await order.findById(id);
+    if (!order) {
+      return res.status(404).send('Order not found');
+    }
+
+    // Fetch the product based on product_name in the order
+    const product = await Product.findOne({ product_name: Order.product });
+    if (!product) {
+      return res.status(404).send('Product not found');
+    }
+
+    // // Check if product quantity is sufficient
+    // if (product.quantity < Order.quantity) {
+    //   return res
+    //     .status(400)
+    //     .send(
+    //       `Insufficient stock. Available quantity: ${product.quantity}`
+    //     );
+    // }
+
+    // // Update the product quantity
+    // product.quantity -= Order.quantity;
+    await product.save();
+
+    // Update the order status to completed
+    const query = {
+      $set: {
+        ...req.body,
+        status:'Cancelled', // Default to 'Completed' if not provided
+        deliveredAt: new Date(), // Add current date
+      },
+    };
+    const updatedOrder = await order.findByIdAndUpdate(id, query, {
+      new: true,
+    });
+
+    if (updatedOrder) {
+      return res
+        .status(200)
+        .send({
+          message: 'Order updated to completed and stock updated',
+        });
+    }
+
+    res.status(404).send('Order not updated');
+  } catch (error) {
+    console.error('Error updating order:', error);
+    res.status(500).send('Something went wrong');
+  }
+};
+
 const orderDelivered = async (req, res) => {
   try {
     const { id } = req.params;
@@ -957,4 +1013,4 @@ const getProductsCron = async (req, res) => {
 
 
 
-export {getProductsCron,deleteEmployee,getAllEmployee,addEmployee,getTotalInventory,getTotalRaw,getAllSales,getTotalOrders,getMonthlySales,getAllOrders,getWeeklySales,orderDelivered,updateOrder, deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
+export {updateOrderCancel,getProductsCron,deleteEmployee,getAllEmployee,addEmployee,getTotalInventory,getTotalRaw,getAllSales,getTotalOrders,getMonthlySales,getAllOrders,getWeeklySales,orderDelivered,updateOrder, deleteOrder,getPendingOrder,getOrderProccessing,getOrder,createOrder,deleteProductRaw,new_product_raw,get_product_raw,update_product_raw,get_product_Out,new_product, get_product, update_product, delete_product, image_update ,getOutProduct,deleteProduct};
