@@ -32,27 +32,69 @@ const __dirname = path.dirname(__filename)
 //   }
 // };
 
+// const new_product = async (req, res) => {
+//   try {
+//     // Multer stores the file locally, now we upload to Cloudinary
+//     const images = [];
+// console.log(images)
+// console.log(req.files)
+//     if (req.files && req.files.length > 0) {
+//       for (const file of req.files) {
+//         // Upload image to Cloudinary
+//         const result = await cloudinary.uploader.upload(file.path, {
+//           folder: 'products', // Optional: Organize images in the 'products' folder
+//           resource_type: 'auto', // Auto-detect file type (e.g., image, video)
+//         });
+
+//         // Push the Cloudinary image URL to the images array
+//         images.push(result.secure_url);
+//       }
+//     }
+
+//     // Save the product to the database with the Cloudinary image URLs
+//     req.body.images = images; // Set the product's image field to the uploaded URLs
+//     const product = new Product(req.body);
+//     const savedProduct = await product.save();
+
+//     res.status(200).send({
+//       message: 'Product saved successfully',
+//       data: savedProduct,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(400).send({
+//       message: 'Error uploading images',
+//       error: error.message,
+//     });
+//   }
+// };
+
 const new_product = async (req, res) => {
   try {
-    // Multer stores the file locally, now we upload to Cloudinary
     const images = [];
-console.log(images)
-console.log(req.files)
+    console.log('Files received:', req.files);
+
     if (req.files && req.files.length > 0) {
       for (const file of req.files) {
-        // Upload image to Cloudinary
-        const result = await cloudinary.uploader.upload(file.path, {
-          folder: 'products', // Optional: Organize images in the 'products' folder
-          resource_type: 'auto', // Auto-detect file type (e.g., image, video)
-        });
-
-        // Push the Cloudinary image URL to the images array
-        images.push(result.secure_url);
+        try {
+          const result = await cloudinary.uploader.upload(file.path, {
+            folder: 'products',
+            resource_type: 'auto',
+          });
+          images.push(result.secure_url);
+          fs.unlinkSync(file.path); // Clean up temporary file
+        } catch (uploadError) {
+          console.error('Cloudinary upload error:', uploadError);
+          return res.status(500).send({
+            message: 'Error uploading to Cloudinary',
+            error: uploadError.message,
+          });
+        }
       }
     }
 
-    // Save the product to the database with the Cloudinary image URLs
-    req.body.images = images; // Set the product's image field to the uploaded URLs
+    // Save product to the database
+    req.body.images = images;
     const product = new Product(req.body);
     const savedProduct = await product.save();
 
@@ -61,7 +103,7 @@ console.log(req.files)
       data: savedProduct,
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error saving product:', error);
     res.status(400).send({
       message: 'Error uploading images',
       error: error.message,
