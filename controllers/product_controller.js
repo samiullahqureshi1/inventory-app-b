@@ -7,7 +7,6 @@ import mongoose from "mongoose";
 import { order } from "../models/order.js";
 import { fileURLToPath } from "url";
 import { Employee } from "../models/employee.js";
-import { uploadToCloudinary } from "../utils/multer.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename)
 
@@ -33,68 +32,40 @@ const __dirname = path.dirname(__filename)
 //   }
 // };
 
-// const new_product = async (req, res) => {
-//   try {
-//     // Multer stores the file locally, now we upload to Cloudinary
-//     const images = [];
-// console.log(images)
-// console.log(req.files)
-//     if (req.files && req.files.length > 0) {
-//       for (const file of req.files) {
-//         // Upload image to Cloudinary
-//         const result = await cloudinary.uploader.upload(file.path, {
-//           folder: 'products', // Optional: Organize images in the 'products' folder
-//           resource_type: 'auto', // Auto-detect file type (e.g., image, video)
-//         });
-
-//         // Push the Cloudinary image URL to the images array
-//         images.push(result.secure_url);
-//       }
-//     }
-
-//     // Save the product to the database with the Cloudinary image URLs
-//     req.body.images = images; // Set the product's image field to the uploaded URLs
-//     const product = new Product(req.body);
-//     const savedProduct = await product.save();
-
-//     res.status(200).send({
-//       message: 'Product saved successfully',
-//       data: savedProduct,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(400).send({
-//       message: 'Error uploading images',
-//       error: error.message,
-//     });
-//   }
-// };
-
 const new_product = async (req, res) => {
   try {
-    const uploadedImages = [];
+    // Multer stores the file locally, now we upload to Cloudinary
+    const images = [];
+console.log(images)
+console.log(req.files)
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        // Upload image to Cloudinary
+        const result = await cloudinary.uploader.upload(file.path, {
+          folder: 'products', // Optional: Organize images in the 'products' folder
+          resource_type: 'auto', // Auto-detect file type (e.g., image, video)
+        });
 
-    // Upload each file to Cloudinary
-    for (const file of req.files) {
-      const imageUrl = await uploadToCloudinary(file);
-      uploadedImages.push(imageUrl);
+        // Push the Cloudinary image URL to the images array
+        images.push(result.secure_url);
+      }
     }
 
-    // Save product details and image URLs to the database
-    const productData = {
-      ...req.body,
-      images: uploadedImages,
-    };
+    // Save the product to the database with the Cloudinary image URLs
+    req.body.images = images; // Set the product's image field to the uploaded URLs
+    const product = new Product(req.body);
+    const savedProduct = await product.save();
 
-    const newProduct = await Product.create(productData);
-
-    res.status(201).json({
-      message: "Product created successfully",
-      product: newProduct,
+    res.status(200).send({
+      message: 'Product saved successfully',
+      data: savedProduct,
     });
   } catch (error) {
-    console.error("Error creating product:", error);
-    res.status(500).json({ message: "Failed to create product", error: error.message });
+    console.error(error);
+    res.status(400).send({
+      message: 'Error uploading images',
+      error: error.message,
+    });
   }
 };
 
