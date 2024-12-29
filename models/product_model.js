@@ -27,6 +27,9 @@ const product_schema = new mongoose.Schema({
   expiry_date: {
     type: Date, // New field for expiry date
   },
+  unit:{
+type:String
+  }
 },{
   timestamps:true
 });
