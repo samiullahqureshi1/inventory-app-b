@@ -68,7 +68,7 @@ const new_product_raw = async (req, res) => {
       const images = req.files.map((file) => file.path); // Expecting array of files
       req.body.images = images;
 
-      const product = new Product(req.body);
+      const product = new RawMaterial(req.body);
       const savedProduct = await product.save();
 
       res.status(200).send({
