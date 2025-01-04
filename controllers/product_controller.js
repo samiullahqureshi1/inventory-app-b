@@ -55,7 +55,7 @@ const new_product = async (req, res) => {
           error: error.message,
       });
   }
-};
+}
 
 
 
